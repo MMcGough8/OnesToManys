@@ -14,5 +14,4 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
     
     List<Brand> findByIsActive(Boolean isActive);
     
-    List<Brand> findByCountry(String country);
 }

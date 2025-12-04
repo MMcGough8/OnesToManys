@@ -25,9 +25,6 @@ public class Brand {
     @Column(name = "founding_year")
     private Integer foundingYear;
 
-    @Column(nullable = false)
-    private String country;
-
     @Column(name = "logo_url")
     private String logoUrl;
 
