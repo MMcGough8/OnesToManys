@@ -9,7 +9,7 @@ CREATE TABLE brands (
     website VARCHAR(255),
     description VARCHAR(500),
     is_active BOOLEAN DEFAULT TRUE,
-    CONSTTRAINT chk_founding_year CHECK (founding_year >= 1800 AND founding_year <= YEAR(CURRENT_DATE))
+    CONSTRAINT chk_founding_year CHECK (founding_year >= 1800 AND founding_year <= YEAR(CURRENT_DATE))
 );
 
 CREATE TABLE products (
@@ -25,9 +25,9 @@ CREATE TABLE products (
     release_date DATE,
     stock_quantity INT DEFAULT 0,
     is_available BOOLEAN DEFAULT TRUE,
-    CONSTTRAINT fk_brand FOREIGN KEY (brand_id) REFERENCE brands(id) ON DELETE CASCADE,
-    CONSTTRAINT chk_price CHECK (price >= 0),
-    CONSTTRAINT chk_stock CHECK (stock_quantity >= 0)
+    CONSTRAINT fk_brand FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE CASCADE,
+    CONSTRAINT chk_price CHECK (price >= 0),
+    CONSTRAINT chk_stock CHECK (stock_quantity >= 0)
 );
 
 CREATE INDEX idx_brand_name ON brands(name);
