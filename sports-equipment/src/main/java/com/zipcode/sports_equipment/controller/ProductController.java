@@ -43,4 +43,6 @@ public class ProductController {
         return productRepository.findBySku(sku)
                 .orElseThrow(() -> new RuntimeException("Product not found with SKU: " + sku));
     }
+
+    
 }
