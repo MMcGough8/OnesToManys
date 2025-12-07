@@ -2,12 +2,14 @@ package com.zipcode.sports_equipment.controller;
 
 import com.zipcode.sports_equipment.entity.Brand;
 import com.zipcode.sports_equipment.entity.Product;
-import com.zipcode.sports_equipment.repository.ProductRepository;
 import com.zipcode.sports_equipment.repository.BrandRepository;
+import com.zipcode.sports_equipment.repository.ProductRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -52,9 +54,8 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<?> createProduct(@RequestBody Map<String, Object> productRequest) {
         try {
-       
             if (!productRequest.containsKey("brandId")) {
-            return ResponseEntity.badRequest().body("brandId is required");
+                return ResponseEntity.badRequest().body("brandId is required");
             }
 
             Long brandId = Long.valueOf(productRequest.get("brandId").toString());
@@ -62,13 +63,72 @@ public class ProductController {
 
             Product product = new Product();
 
+            if (productRequest.containsKey("name")) {
+                product.setName(productRequest.get("name").toString());
+            } else {
+                return ResponseEntity.badRequest().body("Product name is required");
+            }
+
+            if (productRequest.containsKey("sku")) {
+                String sku = productRequest.get("sku").toString();
+                if (productRepository.findBySku(sku).isPresent()) {
+                    return ResponseEntity.badRequest().body("SKU already exists");
+                }
+                product.setSku(sku);
+            } else {
+                return ResponseEntity.badRequest().body("SKU is required");
+            }
+
+            if (productRequest.containsKey("price")) {
+                product.setPrice(new BigDecimal(productRequest.get("price").toString()));
+            } else {
+                return ResponseEntity.badRequest().body("Price is required");
+            }
+
+            if (productRequest.containsKey("sportCategory")) {
+                product.setSportCategory(productRequest.get("sportCategory").toString());
+            } else {
+                return ResponseEntity.badRequest().body("Sport category is required");
+            }
+
+            if (productRequest.containsKey("productType")) {
+                product.setProductType(productRequest.get("productType").toString());
+            } else {
+                return ResponseEntity.badRequest().body("Product type is required");
+            }
+
+            if (productRequest.containsKey("description")) {
+                product.setDescription(productRequest.get("description").toString());
+            }
+            
+            if (productRequest.containsKey("imageUrl")) {
+                product.setImageUrl(productRequest.get("imageUrl").toString());
+            }
+            
+            if (productRequest.containsKey("releaseDate")) {
+                product.setReleaseDate(LocalDate.parse(productRequest.get("releaseDate").toString()));
+            }
+            
+            if (productRequest.containsKey("stockQuantity")) {
+                product.setStockQuantity(Integer.valueOf(productRequest.get("stockQuantity").toString()));
+            } else {
+                product.setStockQuantity(0);
+            }
+            
+            if (productRequest.containsKey("isAvailable")) {
+                product.setIsAvailable(Boolean.valueOf(productRequest.get("isAvailable").toString()));
+            } else {
+                product.setIsAvailable(true);
+            }
+
             product.setBrand(brand);
             Product savedProduct = productRepository.save(product);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+            
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating product: " + e.getMessage());
         }
     }
-    
+
 }
