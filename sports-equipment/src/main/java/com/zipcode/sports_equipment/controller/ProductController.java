@@ -131,4 +131,65 @@ public class ProductController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody Map<String, Object> productRequest) {
+        return productRepository.findById(id)
+                .map(product -> {
+                    try {
+                        if (productRequest.containsKey("brandId")) {
+                            Long brandId = Long.valueOf(productRequest.get("brandId").toString());
+                            Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new RuntimeException("Brand not found"));
+                            product.setBrand(brand);
+                        }
+
+                        if (productRequest.containsKey("name")) {
+                            product.setName(productRequest.get("name").toString());
+                        }
+                        if (productRequest.containsKey("sku")) {
+                            product.setSku(productRequest.get("sku").toString());
+                        }
+                        if (productRequest.containsKey("price")) {
+                            product.setPrice(new BigDecimal(productRequest.get("price").toString()));
+                        }
+                        if (productRequest.containsKey("sportCategory")) {
+                            product.setSportCategory(productRequest.get("sportCategory").toString());
+                        }
+                        if (productRequest.containsKey("productType")) {
+                            product.setProductType(productRequest.get("productType").toString());
+                        }
+                        if (productRequest.containsKey("description")) {
+                            product.setDescription(productRequest.get("description").toString());
+                        }
+                        if (productRequest.containsKey("imageUrl")) {
+                            product.setImageUrl(productRequest.get("imageUrl").toString());
+                        }
+                        if (productRequest.containsKey("releaseDate")) {
+                            product.setReleaseDate(LocalDate.parse(productRequest.get("releaseDate").toString()));
+                        }
+                        if (productRequest.containsKey("stockQuantity")) {
+                            product.setStockQuantity(Integer.valueOf(productRequest.get("stockQuantity").toString()));
+                        }
+                        if (productRequest.containsKey("isAvailable")) {
+                            product.setIsAvailable(Boolean.valueOf(productRequest.get("isAvailable").toString()));
+                        }
+
+                        Product updatedProduct = productRepository.save(product);
+                        return ResponseEntity.ok(updatedProduct);
+                        
+                    } catch (Exception e) {
+                        return ResponseEntity.badRequest().body("Error updating product: " + e.getMessage());
+                    }
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+        return productRepository.findById(id)
+                .map(product -> {
+                    productRepository.delete(product);
+                    return ResponseEntity.ok("Product deleted successfully");
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

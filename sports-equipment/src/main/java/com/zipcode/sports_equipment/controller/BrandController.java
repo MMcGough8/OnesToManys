@@ -59,4 +59,44 @@ public class BrandController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating brand: " + e.getMessage());
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateBrand(@PathVariable Long id, @RequestBody Brand brandDetails) {
+        return brandRepository.findById(id)
+                .map(brand -> {
+                    if (brandDetails.getName() != null) {
+                        brand.setName(brandDetails.getName());
+                    }
+                    if (brandDetails.getFoundingYear() != null) {
+                        brand.setFoundingYear(brandDetails.getFoundingYear());
+                    }
+                    if (brandDetails.getLogoUrl() != null) {
+                        brand.setLogoUrl(brandDetails.getLogoUrl());
+                    }
+                    if (brandDetails.getWebsite() != null) {
+                        brand.setWebsite(brandDetails.getWebsite());
+                    }
+                    if (brandDetails.getDescription() != null) {
+                        brand.setDescription(brandDetails.getDescription());
+                    }
+                    if (brandDetails.getIsActive() != null) {
+                        brand.setIsActive(brandDetails.getIsActive());
+                    }
+                    
+                    Brand updatedBrand = brandRepository.save(brand);
+                    return ResponseEntity.ok(updatedBrand);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteBrand(@PathVariable Long id) {
+        return brandRepository.findById(id)
+                .map(brand -> {
+                    brandRepository.delete(brand);
+                    return ResponseEntity.ok("Brand deleted successfully");
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
+
