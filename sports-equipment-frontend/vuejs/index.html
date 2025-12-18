@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Equipment Manager - Vue.js</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <h1>Sports Equipment Manager</h1>
+            <p class="subtitle">Built with Vue.js</p>
+        </header>
+
+        <main class="container">
+            <h2>Brands & Products</h2>
+            <button @click="addBrand">+ Add Brand</button>
+            <button @click="addProduct">+ Add Product</button>
+            
+            <div id="brands-container">
+                <p v-if="brands.length === 0">No brands yet. Add one!</p>
+                
+                <div v-for="brand in brands" :key="brand.id" class="brand-section">
+                    <div class="brand-header">
+                        <h3>{{ brand.name }}</h3>
+                        <p>Founded: {{ brand.foundingYear || 'N/A' }}</p>
+                        <p>Website: {{ brand.website || 'N/A' }}</p>
+                        <p>{{ brand.description || '' }}</p>
+                        <button @click="editBrand(brand)">Edit</button>
+                        <button @click="deleteBrand(brand.id)">Delete</button>
+                    </div>
+
+                    <div class="products-section">
+                        <h4>Products:</h4>
+                        <p v-if="brand.products.length === 0">No products yet.</p>
+                        
+                        <div v-for="product in brand.products" :key="product.id" class="product-card">
+                            <h5>{{ product.name }}</h5>
+                            <p>SKU: {{ product.sku }}</p>
+                            <p>Price: ${{ product.price }}</p>
+                            <p>Category: {{ product.sportCategory }}</p>
+                            <p>Type: {{ product.productType }}</p>
+                            <p>Stock: {{ product.stockQuantity }}</p>
+                            <button @click="editProduct(product)">Edit</button>
+                            <button @click="deleteProduct(product.id)">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
